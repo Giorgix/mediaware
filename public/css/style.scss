@@ -1,0 +1,52 @@
+@import "../components/inuit-defaults/settings.defaults";
+@import '../components/inuit-responsive-settings/_settings.responsive';
+
+@import "../components/inuit-functions/tools.functions";
+@import "../components/inuit-mixins/tools.mixins";
+@import "../components/inuit-tools-widths/_tools.widths";
+@import '../components/inuit-responsive-tools/_tools.responsive';
+
+
+@import "../components/inuit-normalize/generic.normalize";
+@import "../components/inuit-box-sizing/generic.box-sizing";
+
+
+@import "../components/inuit-page/base.page";
+
+
+$inuit-enable-layout--middle: true;
+$inuit-enable-layout--center: true;
+$inuit-enable-layout--huge: true;
+@import '../components/inuit-layout/_objects.layout';
+
+
+@import '../components/inuit-widths/_trumps.widths';
+@import '../components/inuit-widths-responsive/_trumps.widths-responsive';
+
+html {
+  font-size: 100%;
+
+}
+
+body {
+   background-color: #FEFEFE;
+   color: #333333;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+// Hack to fix the problem with 
+// white-space and line break in the HTML
+.layout {
+  font-size: 0;
+}
+
+.layout__item {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
