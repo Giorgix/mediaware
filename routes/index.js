@@ -1,6 +1,16 @@
+/*******************
+ * TODO
+ *
+ * check if there is recommendations
+ * iterate over the recommendations
+ * show only those with predicted ranking higher than 2.5 over 5
+ *
+ */
+
 var express = require('express');
 var router = express.Router();
 var client = require('../client');
+var http = require('http');
 
 var critics = {
     'Lisa': {
@@ -55,6 +65,30 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/movies/:title', function(req, res) {
+  console.log(req.params.title);
+  var movieTitle = req.params.title;
+  var options = {
+    host : 'www.omdbapi.com',
+    path : '/?t=' + movieTitle,
+    port : 80,
+    method : 'GET'
+  }
+
+  http.request(options, function(response){
+    var data;
+    console.log('STATUS: ' + response.statusCode);
+    console.log('HEADERS: ' + JSON.stringify(response.headers));
+    response.setEncoding('utf8');
+    response.on('data', function (chunk) {
+      data = chunk;
+    });
+    response.on('end', function() {
+      res.send(data); 
+    });
+  }).end();
+});
+
 router.get('/recommendations/:user', function(req, res) {
   client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
     client.invoke("getRecommendedItems", 
@@ -62,7 +96,16 @@ router.get('/recommendations/:user', function(req, res) {
                   itemMatch, 
                   req.params.user, function(err, rec, more) {
       console.log(rec);
-      res.send(rec);
+      var movieTitle = rec[0][1].split(' ').join('+');
+      var movie;
+      http.request('http://localhost:3000/movies/' + movieTitle, function(response){
+        response.on('data', function(data) {
+          movie = JSON.parse(data);
+        });
+        response.on('end', function() {
+          res.json(movie);
+        });
+      }).end();
     });
   });
 });

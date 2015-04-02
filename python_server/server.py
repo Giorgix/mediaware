@@ -1,3 +1,9 @@
+# TODO
+'''
+   * save similar items dataset in the database
+   * update that dataset frecuently
+'''
+
 import zerorpc
 import recommendations as rec
 
