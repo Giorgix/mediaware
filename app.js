@@ -7,6 +7,16 @@ var bodyParser = require('body-parser');
 var exphbs  = require('express-handlebars');
 var routes = require('./routes/index');
 var users = require('./routes/user');
+var mongoose = require('mongoose');
+
+
+// DB ===================================
+mongoose.connect('mongodb://localhost:27017/recommendations');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback() {
+  console.log('Connected to DB');
+})
 
 var app = express();
 

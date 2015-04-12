@@ -11,6 +11,27 @@ var express = require('express');
 var router = express.Router();
 var client = require('../client');
 var http = require('http');
+var mongoose = require('mongoose');
+
+var Schema = mongoose.Schema;
+
+var itemSimilarity = new Schema({
+  title: {
+    type: String
+  },
+
+  similarity: {
+    type: Number
+  }
+});
+
+var similarItem = new Schema({
+  movie: {
+    type: String,
+  },
+
+  similarItems: [itemSimilarity]
+});
 
 var critics = {
     'Lisa': {
@@ -67,7 +88,7 @@ router.get('/', function(req, res) {
 
 router.get('/movies/:title', function(req, res) {
   console.log(req.params.title);
-  var movieTitle = req.params.title;
+  var movieTitle = req.params.title.split(' ').join('+');
   var options = {
     host : 'www.omdbapi.com',
     path : '/?t=' + movieTitle,
@@ -89,14 +110,24 @@ router.get('/movies/:title', function(req, res) {
   }).end();
 });
 
+router.get('/recommendations/calcSimilarItems', function(req, res) {
+  client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
+    for(var key in itemMatch) {
+      console.log(key, itemMatch[key]);
+    }
+    res.json(itemMatch);
+  });
+});
+
 router.get('/recommendations/:user', function(req, res) {
   client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
     client.invoke("getRecommendedItems", 
                   critics, 
                   itemMatch, 
                   req.params.user, function(err, rec, more) {
+      console.log(itemMatch);
       console.log(rec);
-      var movieTitle = rec[0][1].split(' ').join('+');
+      var movieTitle = rec[0][1];
       var movie;
       http.request('http://localhost:3000/movies/' + movieTitle, function(response){
         response.on('data', function(data) {
