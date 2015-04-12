@@ -25,13 +25,15 @@ var itemSimilarity = new Schema({
   }
 });
 
-var similarItem = new Schema({
-  movie: {
+var movie = new Schema({
+  title: {
     type: String,
   },
 
   similarItems: [itemSimilarity]
 });
+
+var Movie = mongoose.model('movie', movie);
 
 var critics = {
     'Lisa': {
@@ -112,20 +114,49 @@ router.get('/movies/:title', function(req, res) {
 
 router.get('/recommendations/calcSimilarItems', function(req, res) {
   client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
-    for(var key in itemMatch) {
-      console.log(key, itemMatch[key]);
+    for(var movie in itemMatch) {
+      var newMovie = new Movie({
+        title: movie
+      });
+      for(var similarMovie in itemMatch[movie]) {
+        newMovie.similarItems.addToSet({
+          title: similarMovie,
+          similarity: itemMatch[movie][similarMovie]
+        })
+        //console.log(itemMatch[movie][similarMovie]);
+      }
+      newMovie.save(function(err, similarMovies) {
+        if(err) res.send(err);
+        res.json(itemMatch);
+      });
     }
-    res.json(itemMatch);
   });
 });
 
+router.get('/recommendations/similarItems', function(req, res) {
+  Movie.find(function(err, data) {
+    res.json(data);
+  });
+});
+
+// this is shiet think about the object parsing
 router.get('/recommendations/:user', function(req, res) {
-  client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
+  var items = {};
+  Movie.find(function(error, itemMatch) {
+    for(var movie in itemMatch) {
+      items[itemMatch[movie].title] = [];
+      //console.log(itemMatch[movie].similarItems);
+      for(var i = 0; i < itemMatch[movie].similarItems.length; i++) {
+        var movieTitle = itemMatch[movie].similarItems[i].title;
+        var item = {};
+        item[movieTitle] = itemMatch[movie].similarItems[i].similarity;
+      items[itemMatch[movie].title].push(item);
+      }
+    }
     client.invoke("getRecommendedItems", 
                   critics, 
-                  itemMatch, 
+                  items, 
                   req.params.user, function(err, rec, more) {
-      console.log(itemMatch);
       console.log(rec);
       var movieTitle = rec[0][1];
       var movie;

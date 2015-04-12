@@ -8,9 +8,6 @@ import zerorpc
 import recommendations as rec
 
 
-print rec
-
-
 class Recommendations(object):
     def calcSimilarItems(self, data):
         return rec.calculateSimilarItems(data)

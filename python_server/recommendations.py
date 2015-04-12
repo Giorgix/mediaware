@@ -1,6 +1,7 @@
 ## Programming Collective Intelligence approach ##
 
 from math import sqrt
+#import operator
 
 
 # A dictionary of movie critics and their ratings of a small
@@ -138,16 +139,17 @@ def similarity_tanimoto(vec1, vec2):
 # Returns the best matches for person from the data dictionary.
 # Number of results and similarity function are optional params.
 def topMatches(data, person, n=5, similarity=similarity_pearson):
-    scores = []
+    scores = {}
     for other in data:
         if other != person:
             # Append the tuple with (value, other) to the scores list
-            scores.append((similarity(data, person, other), other))
+            scores[other] = similarity(data, person, other)
 
     # Sort the list so the highest scores appear at the top
-    scores.sort()
-    scores.reverse()
-    return scores[0:n]
+    #scores.sort()
+    #scores.reverse()
+    #sorted_scores = sorted(scores.items(), key=operator.itemgetter(1))
+    return scores
 
 
 # Gets recommendations for a person by using a weighted average
@@ -201,8 +203,6 @@ def transformData(data):
 ##################################################
 
 
-
-
 def calculateSimilarItems(data, n=10):
     # Create a dictionary of items showing which
     # other items they are most similar to
@@ -232,19 +232,20 @@ def getRecommendedItems(data, itemMatch, user):
     for (item, rating) in userRatings.items():
 
         # Loop over items similar to this one
-        for (similarity, item2) in itemMatch[item]:
+        for (item2) in itemMatch[item]:
+            item2Title = str(item2.keys()[0])
 
             # Ignore if this user has already rated this item
-            if item2 in userRatings:
+            if item2Title in userRatings:
                 continue
 
             # Weight sum of ratings times similarity
-            scores.setdefault(item2, 0)
-            scores[item2] += similarity * rating
+            scores.setdefault(item2Title, 0)
+            scores[item2Title] += item2[item2Title] * rating
 
             # Sum of all the similarities
-            totalSim.setdefault(item2, 0)
-            totalSim[item2] += similarity
+            totalSim.setdefault(item2Title, 0)
+            totalSim[item2Title] += item2[item2Title]
 
     # Divide each total score by total weighting to get an average
     rankings = [(score / totalSim[item], item) for item, score in scores.items()]
