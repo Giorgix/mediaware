@@ -87,8 +87,7 @@ var critics = {
 router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
 });
-
-router.get('/movies/:title', function(req, res) {
+/*router.get('/movies/:title', function(req, res) {
   console.log(req.params.title);
   var movieTitle = req.params.title.split(' ').join('+');
   var options = {
@@ -111,7 +110,7 @@ router.get('/movies/:title', function(req, res) {
     });
   }).end();
 });
-
+*/
 router.get('/recommendations/calcSimilarItems', function(req, res) {
   client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
     for(var movie in itemMatch) {

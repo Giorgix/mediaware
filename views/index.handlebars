@@ -1,21 +1,6 @@
-<main class="layout layout--huge">
-  <div class="layout__item u-1/4-lap-and-up">
-    <h1>{{title }}</h1>
-    <p>Welcome to {{title }}</p>
-  </div>
-
-  <div class="layout__item u-1/4-lap-and-up">
-    <h1>{{title }}</h1>
-    <p>Welcome to {{title }}</p>
-  </div>
-
-  <div class="layout__item u-1/4-lap-and-up">
-    <h1>{{title }}</h1>
-    <p>Welcome to {{title }}</p>
-  </div>
-
-  <div class="layout__item u-1/4-lap-and-up">
-    <h1>{{title }}</h1>
-    <p>Welcome to {{title }}</p>
-  </div>
-</main>
+<div id="app">
+<script type='text/template' id='movie-full-template'>
+  <h3> <%= movie.get('Title') %> </h3>
+  <img class='movie--full' src='<%= movie.get("Poster") %>' alt=''/>
+</script>  
+</div>
