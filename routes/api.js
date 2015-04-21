@@ -90,17 +90,6 @@ var Critics = require('../models/critics');
 });
 */
 
-router.post('/signup', function(req, res) {
-  var user = new User({
-    name: req.body.name
-  }); 
-
-  user.save(function(err, user) {
-    if ( err ) res.send(err);
-    res.json(user);
-  });
-});
-
 router.post('/critics', function(req, res) {
   
   // TODO check if user exists

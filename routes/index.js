@@ -1,4 +1,5 @@
 module.exports = function(app, passport) {
+  var Critics = require('../models/critics');
   
   // GET HOME ===================================
   app.get('/', function(req, res) {
@@ -36,7 +37,12 @@ module.exports = function(app, passport) {
   }));
   // PROFILE =======================================
   app.get('/profile', isLoggedIn, function(req, res) {
-    res.render('profile', {user : req.user})
+    var profile = req.user;
+    Critics.findOne({userId: req.user._id}, function(err, critics) {
+      if ( err ) res.send(err);
+      profile.critics = critics;
+    });
+    res.render('profile', {profile : profile})
   })
   // LOGOUT ========================
   app.get('/logout', function(req, res) {
