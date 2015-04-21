@@ -1,0 +1,22 @@
+  <div>
+    <h1>Login</h1>
+    {{#if message}}
+      <div>{{message}}</div>
+    {{/if}}
+    <form action="/login" method="post" accept-charset="utf-8">
+      <div>
+        <label for="">Email</label>
+        <input type="email" name="email" placeholder="Email" />
+      </div>
+      <div>
+        <label for="">Password</label>
+        <input type="password" name="password" placeholder="Password" />
+      </div>
+      <button type="submit">Login</button>
+
+    </form>
+    <hr />
+
+    <h3> Need an account? </h3>
+    <a href="/signup">Signup</a>
+  </div>

@@ -4,11 +4,15 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var flash = require('connect-flash');
+var session = require('express-session');
 var exphbs  = require('express-handlebars');
-var routes = require('./routes/index');
-var users = require('./routes/user');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var api = require('./routes/api');
 var mongoose = require('mongoose');
 
+var app = express();
 
 // DB ===================================
 mongoose.connect('mongodb://localhost:27017/recommendations');
@@ -18,10 +22,7 @@ db.once('open', function callback() {
   console.log('Connected to DB');
 })
 
-var app = express();
-
-// view engine setup
-
+require('./config/passport')(passport);
 app.engine('handlebars', exphbs({
   defaultLayout: 'main',
   partialsDir: ['views/partials/']
@@ -42,8 +43,22 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+
+app.use(session({
+    secret: 'AFDADGF2394021930546=--021945!@#%#$^SADFSD',
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+// ROUTES ========================================
+require('./routes/index.js')(app, passport);
+// view engine setup
+
+
+app.use('/api', api);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
