@@ -12,30 +12,11 @@ var router = express.Router();
 var client = require('../client');
 var http = require('http');
 var mongoose = require('mongoose');
+var SimilarMovie = require('../models/similarMovies');
+var User = require('../models/user');
+var Critics = require('../models/critics');
 
-var Schema = mongoose.Schema;
-
-var itemSimilarity = new Schema({
-  title: {
-    type: String
-  },
-
-  similarity: {
-    type: Number
-  }
-});
-
-var movie = new Schema({
-  title: {
-    type: String,
-  },
-
-  similarItems: [itemSimilarity]
-});
-
-var Movie = mongoose.model('movie', movie);
-
-var critics = {
+/*var critics = {
     'Lisa': {
         'Lady in the Water': 2.5,
         'Snakes on a Plane': 3.5,
@@ -79,7 +60,7 @@ var critics = {
         'You, Me and Dupree': 1.0,
         'Superman Returns': 4.0}}
 
-
+*/
 
 
 /* GET home page. */
@@ -111,37 +92,84 @@ router.get('/', function(req, res) {
   }).end();
 });
 */
-router.get('/recommendations/calcSimilarItems', function(req, res) {
+
+router.post('/signup', function(req, res) {
+  var user = new User({
+    name: req.body.name
+  }); 
+
+  user.save(function(err, user) {
+    if ( err ) res.send(err);
+    res.json(user);
+  });
+});
+
+router.post('/api/critics', function(req, res) {
+  
+  // TODO check if user exists
+  Critics.findOne({userId: req.body.userId}, function(err, critics) {
+    if ( err ) res.send(err);
+    var ratedMovie = {
+      title: req.body.title,
+      rating: req.body.rating
+    };
+    if ( critics ) {
+      critics.ratedMovies.addToSet(ratedMovie);
+    }
+    else {
+     var critics = new Critics({
+       userId: req.body.userId
+     });
+     critics.ratedMovies.addToSet(ratedMovie);
+    }
+
+    critics.save(function(err, critics) {
+      if ( err ) res.send(err);
+      res.json(critics);
+    }); 
+  });
+});
+
+router.get('/api/critics', function(req, res) {
+  var users = {};
+  Critics.find(function(err, data) {
+    if ( err ) res.status(500).send(err);
+    res.json(data);
+  });
+  
+});
+
+router.get('/api/recommendations/calcSimilarItems', function(req, res) {
   client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
     for(var movie in itemMatch) {
-      var newMovie = new Movie({
+      var newMovie = new SimilarMovie({
         title: movie
       });
       for(var similarMovie in itemMatch[movie]) {
         newMovie.similarItems.addToSet({
           title: similarMovie,
           similarity: itemMatch[movie][similarMovie]
-        })
+        });
         //console.log(itemMatch[movie][similarMovie]);
       }
       newMovie.save(function(err, similarMovies) {
-        if(err) res.send(err);
-        res.json(itemMatch);
+        if(err) res.send('ERROR: ' + err);
+        res.json(similarMovies);
       });
     }
   });
 });
 
-router.get('/recommendations/similarItems', function(req, res) {
-  Movie.find(function(err, data) {
+router.get('/api/recommendations/similarItems', function(req, res) {
+  SimilarMovie.find(function(err, data) {
     res.json(data);
   });
 });
 
 // this is shiet think about the object parsing
-router.get('/recommendations/:user', function(req, res) {
+router.get('/api/recommendations/:user', function(req, res) {
   var items = {};
-  Movie.find(function(error, itemMatch) {
+  SimilarMovie.find(function(error, itemMatch) {
     for(var movie in itemMatch) {
       items[itemMatch[movie].title] = [];
       //console.log(itemMatch[movie].similarItems);
@@ -158,6 +186,7 @@ router.get('/recommendations/:user', function(req, res) {
                   req.params.user, function(err, rec, more) {
       console.log(rec);
       var movieTitle = rec[0][1];
+      console.log(movieTitle);
       var movie;
       http.request('http://localhost:3000/movies/' + movieTitle, function(response){
         response.on('data', function(data) {
