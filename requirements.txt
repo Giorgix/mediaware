@@ -1,0 +1,4 @@
+MEDIAWARE
+
+zerorpc==0.4.4
+pymongo==3.0.1

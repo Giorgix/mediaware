@@ -2,11 +2,20 @@
 
 from math import sqrt
 #import operator
+from pymongo import MongoClient
+
+db = MongoClient('mongodb://localhost:27017/').recommendations
+critics = db.critics.find()
+criticsList = []
+for critic in critics:
+    criticsList.append(critic)
+
+print criticsList
 
 
 # A dictionary of movie critics and their ratings of a small
 # set of movies
-critics = {
+critics2 = {
     'Lisa Rose': {
         'Lady in the Water': 2.5,
         'Snakes on a Plane': 3.5,
@@ -189,11 +198,13 @@ def getRecommendations(data, person, similarity=similarity_pearson):
 def transformData(data):
     result = {}
     for person in data:
-        for item in data[person]:
-            result.setdefault(item, {})
+        for item in person['ratedMovies']:
+            print item
+            result.setdefault(item['title'], {})
 
             # Flip item and person
-            result[item][person] = data[person][item]
+            result[item['title']][person['userId']] = item['rating']
+            print result
     return result
 
 ##################################################

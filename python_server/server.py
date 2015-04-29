@@ -6,11 +6,17 @@
 
 import zerorpc
 import recommendations as rec
+from pymongo import MongoClient
+
+db = MongoClient('mongodb://localhost:27017/').recommendations
+critics = db.critics.find()
+for critic in critics:
+    print critic
 
 
 class Recommendations(object):
-    def calcSimilarItems(self, data):
-        return rec.calculateSimilarItems(data)
+    def calcSimilarItems(self):
+        return rec.calculateSimilarItems(critics)
 
     def getRecommendedItems(self, data, itemMatch, user):
         return rec.getRecommendedItems(data, itemMatch, user)

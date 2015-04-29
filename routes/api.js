@@ -125,8 +125,10 @@ router.get('/critics', function(req, res) {
   
 });
 
+// TODO here critics should be retrieved from the DB 
+// through the python server
 router.get('/recommendations/calcSimilarItems', function(req, res) {
-  client.invoke("calcSimilarItems", critics, function(error, itemMatch, more) {
+  client.invoke("calcSimilarItems", function(error, itemMatch, more) {
     for(var movie in itemMatch) {
       var newMovie = new SimilarMovie({
         title: movie
