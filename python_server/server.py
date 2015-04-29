@@ -15,6 +15,7 @@ for critic in critics:
 
 
 class Recommendations(object):
+    # here it should get the critics when its called
     def calcSimilarItems(self):
         return rec.calculateSimilarItems(critics)
 
