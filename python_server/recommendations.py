@@ -5,13 +5,11 @@ from math import sqrt
 from pymongo import MongoClient
 
 db = MongoClient('mongodb://localhost:27017/').recommendations
-critics = db.critics.find()
+'''critics = db.critics.find()
 criticsList = []
 for critic in critics:
     criticsList.append(critic)
-
-print criticsList
-
+'''
 
 # A dictionary of movie critics and their ratings of a small
 # set of movies
@@ -199,12 +197,10 @@ def transformData(data):
     result = {}
     for person in data:
         for item in person['ratedMovies']:
-            print item
             result.setdefault(item['title'], {})
 
             # Flip item and person
             result[item['title']][person['userId']] = item['rating']
-            print result
     return result
 
 ##################################################
@@ -233,37 +229,47 @@ def calculateSimilarItems(data, n=10):
         result[item] = scores
     return result
 
+def checkElementExists(data, element):
+    for item in data:
+        if item['title'] == element:
+            return True
+    return False
+
 
 def getRecommendedItems(data, itemMatch, user):
-    userRatings = data[user]
+    userRatings = data
+    #print userRatings
+    #print '*********************'
+    #print itemMatch
     scores = {}
     totalSim = {}
 
     # Loop over items rated by this user
-    for (item, rating) in userRatings.items():
-
+    for (item) in userRatings[0]['ratedMovies']:
         # Loop over items similar to this one
-        for (item2) in itemMatch[item]:
-            item2Title = str(item2.keys()[0])
-
-            # Ignore if this user has already rated this item
-            if item2Title in userRatings:
+        movie = db.similarmovies.find_one({'title': item['title']})
+        for (item2) in movie['similarItems']:
+            item2Title = item2['title']
+            if checkElementExists(userRatings[0]['ratedMovies'], item2Title) is True:
                 continue
 
-            # Weight sum of ratings times similarity
+            # Ignore if this user has already rated this item
+                        # Weight sum of ratings times similarity
             scores.setdefault(item2Title, 0)
-            scores[item2Title] += item2[item2Title] * rating
+            scores[item2Title] += item2['similarity'] * item['rating']
 
             # Sum of all the similarities
             totalSim.setdefault(item2Title, 0)
-            totalSim[item2Title] += item2[item2Title]
+            totalSim[item2Title] += item2['similarity']
+        print scores
 
     # Divide each total score by total weighting to get an average
     rankings = [(score / totalSim[item], item) for item, score in scores.items()]
+    print rankings
 
     # Return the rankings from highest to lowest
-    rankings.sort()
-    rankings.reverse()
+    #rankings.sort()
+    #rankings.reverse()
     return rankings
 
 

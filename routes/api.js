@@ -93,6 +93,7 @@ var Critics = require('../models/critics');
 router.post('/critics', function(req, res) {
   
   // TODO check if user exists
+  console.log(req.body);
   Critics.findOne({userId: req.body.userId}, function(err, critics) {
     if ( err ) res.send(err);
     var ratedMovie = {
@@ -129,6 +130,7 @@ router.get('/critics', function(req, res) {
 // through the python server
 router.get('/recommendations/calcSimilarItems', function(req, res) {
   client.invoke("calcSimilarItems", function(error, itemMatch, more) {
+    console.log(itemMatch);
     for(var movie in itemMatch) {
       var newMovie = new SimilarMovie({
         title: movie
@@ -142,10 +144,10 @@ router.get('/recommendations/calcSimilarItems', function(req, res) {
       }
       newMovie.save(function(err, similarMovies) {
         if(err) res.send('ERROR: ' + err);
-        res.json(similarMovies);
       });
     }
   });
+    res.status(200).send('DONE');
 });
 
 router.get('/recommendations/similarItems', function(req, res) {
@@ -157,34 +159,22 @@ router.get('/recommendations/similarItems', function(req, res) {
 // this is shiet think about the object parsing
 router.get('/recommendations/:user', function(req, res) {
   var items = {};
-  SimilarMovie.find(function(error, itemMatch) {
-    for(var movie in itemMatch) {
-      items[itemMatch[movie].title] = [];
-      //console.log(itemMatch[movie].similarItems);
-      for(var i = 0; i < itemMatch[movie].similarItems.length; i++) {
-        var movieTitle = itemMatch[movie].similarItems[i].title;
-        var item = {};
-        item[movieTitle] = itemMatch[movie].similarItems[i].similarity;
-      items[itemMatch[movie].title].push(item);
-      }
-    }
-    client.invoke("getRecommendedItems", 
-                  critics, 
-                  items, 
-                  req.params.user, function(err, rec, more) {
-      console.log(rec);
-      var movieTitle = rec[0][1];
-      console.log(movieTitle);
-      var movie;
-      http.request('http://localhost:3000/movies/' + movieTitle, function(response){
-        response.on('data', function(data) {
-          movie = JSON.parse(data);
-        });
-        response.on('end', function() {
-          res.json(movie);
-        });
-      }).end();
-    });
+  console.log(req.params.user);
+  client.invoke("getRecommendedItems", 
+                req.params.user, function(err, rec, more) {
+    console.log('RES: ' + rec);
+    var movieTitle = rec[0][1];
+    console.log(movieTitle);
+    res.send(rec)
+    /*var movie;
+    http.request('http://localhost:3000/movies/' + movieTitle, function(response){
+      response.on('data', function(data) {
+        movie = JSON.parse(data);
+      });
+      response.on('end', function() {
+        res.json(movie);
+      });
+    }).end();*/
   });
 });
 
