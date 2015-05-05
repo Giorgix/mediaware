@@ -16,25 +16,17 @@ app.Ctrl = {
     movieFullView.render();
   },
 
-  login: function() {
-    var loginView = new app.loginView();
-    loginView.render();
-  },
-
-  signup: function() {
-    var signupView = new app.signupView();
-    signupView.render();
-  },
-
-  signupPost: function(email, password) {
-    console.log(email, password);
-    this.usersCollection.create({
-      email: email,
-      password: password
-    }, {
-      success: function() {
-        console.log('user created');
+  home: function() {
+    console.log('index');
+    var homeView = new app.AppView();
+    $.ajax({
+      type: 'GET',
+      url: '/session',
+      success: function(res) {
+        homeView.render(res);
       }
     });
   }
+
+
 }

@@ -1,4 +1,20 @@
 <div id="app">
+</div>
+  <!--{{#if user}}
+    <h2>Welcome: {{user.local.email}}</h2>
+    <a href="/profile">Profile</a>
+  {{else}}
+   <a href="/login">Login</a>
+  {{/if}}-->
+  <script type="text/template" id="home-template" charset="utf-8">
+  <% if (user != 'no user') { %>
+    <h2>Welcome: <%- user.local.email%></h2>
+<% } %>
+  <% if (user == 'no user') { %>
+   <a href="/login">Login</a>
+<% } %>
+  
+  </script>
 <script type='text/template' id='movie-full-template'>
   <h3> <%= movie.get('Title') %> </h3>
   <h5> <%= movie.get('Year') %> </h3>
@@ -58,4 +74,17 @@
     </div>
   </div>   
 </script>
-</div>
+<script type="text/template" id="profile-template" charset="utf-8">
+  <div>
+    <div>
+      <h1>Profile page</h1>
+      <a href="/logout"> Logout</a>
+    </div>
+    <div>
+      <h3>Local</h3>
+      <p><strong> ID: </strong> <%- _id %></p>
+      <p><strong> Email: </strong><%- local.email %></p>
+      <p><strong> Critics: </strong> {{critics}}</p>
+    </div>
+  </div>  
+</script>

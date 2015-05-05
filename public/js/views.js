@@ -14,35 +14,13 @@ app.MovieFullView = Backbone.View.extend({
   }
 });
 
-app.loginView = Backbone.View.extend({
-
+app.AppView = Backbone.View.extend({
   el: '#app',
+  
+  template: _.template($('#home-template').html()),
 
-  template: _.template($('#login-template').html()),
-
-  render: function() {
-    this.$el.html(this.template());
+  render: function(res) {
+    this.$el.html(this.template({user: res}));
     return this;
-  }
-});
-
-app.signupView = Backbone.View.extend({
-
-  el: '#app',
-
-  events: {
-    'click #signup-btn': 'signupPost'
-  },
-
-  template: _.template($('#signup-template').html()),
-
-  signupPost: function(e) {
-    e.preventDefault();
-    app.Ctrl.signupPost($('#email').val(), $('#password').val());
-  },
-
-  render: function() {
-    this.$el.html(this.template());
-    return this;
-  }
+ } 
 });

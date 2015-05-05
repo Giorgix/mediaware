@@ -3,18 +3,28 @@ module.exports = function(app, passport) {
   
   // GET HOME ===================================
   app.get('/', function(req, res) {
-    res.render('index');
+      res.render('index');
+  });
+  app.get('/session', function(req, res) {
+     var user = req.user;
+    if(user) {
+      res.json(user)
+    }
+    else {
+      res.send('no user')
+    }
+
   });
   // LOGIN ======================================
   app.get('/login', function(req, res) {
     if(req.isAuthenticated()) {
-      res.redirect('/profile');
+      res.redirect('/');
     } else {
       res.render('login', {message: req.flash('loginMessage') });
     }
   });
   app.post('/login', passport.authenticate('local-login', {
-    successRedirect: '/profile',
+    successRedirect: '/',
     failureRedirect: '/login',
 
     failureFlash: true
@@ -23,18 +33,19 @@ module.exports = function(app, passport) {
   // SIGNUP =======================================
   app.get('/signup', function(req, res) {
     if(req.isAuthenticated()) {
-      res.redirect('/profile');
+      res.redirect('/');
     } else {
       res.render('signup', {message: req.flash('signupMessage') });
     }
   });
-
+    
   app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect: '/profile',
+    successRedirect: '/',
     failureRedirect: '/signup',
-
     failureFlash: true
   }));
+  
+
   // PROFILE =======================================
   app.get('/profile', isLoggedIn, function(req, res) {
     var profile = req.user;
