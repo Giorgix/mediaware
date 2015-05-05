@@ -5,3 +5,6 @@ app.Movie = Backbone.Model.extend({
     title: 'untitled'
   }
 });
+
+app.User = Backbone.Model.extend({
+});

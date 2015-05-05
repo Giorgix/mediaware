@@ -1,16 +1,22 @@
 app.Router = new (Backbone.Router.extend({
 
-
-  initialize: function() { 
-  },
-
   routes: {
     'movies/:movieTitle': 'movie',
+    'login': 'login',
+    'signup': 'signup'
   },
 
   movie: function(movieTitle) {
     app.Ctrl.showMovie(movieTitle);
   },
+
+  login: function() {
+    app.Ctrl.login();
+  },
+
+  signup: function() {
+    app.Ctrl.signup();
+  }
 }));
 
 Backbone.history.start();

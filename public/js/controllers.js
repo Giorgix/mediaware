@@ -1,11 +1,12 @@
 app.Ctrl = {
   
-  movieCollection: new app.Movies(movies),
-
   movie: null,
 
-  initialize: function() {
+  movieCollection: new app.Movies(movies),
   
+  usersCollection: new app.Users(),
+  
+  initialize: function() {
   },
 
   showMovie: function(movieTitle) {
@@ -13,5 +14,27 @@ app.Ctrl = {
 
     var movieFullView = new app.MovieFullView({model: this.movie});
     movieFullView.render();
+  },
+
+  login: function() {
+    var loginView = new app.loginView();
+    loginView.render();
+  },
+
+  signup: function() {
+    var signupView = new app.signupView();
+    signupView.render();
+  },
+
+  signupPost: function(email, password) {
+    console.log(email, password);
+    this.usersCollection.create({
+      email: email,
+      password: password
+    }, {
+      success: function() {
+        console.log('user created');
+      }
+    });
   }
 }

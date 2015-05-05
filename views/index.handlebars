@@ -4,4 +4,58 @@
   <h5> <%= movie.get('Year') %> </h3>
   <img class='movie--full' src='<%= movie.get("Poster") %>' alt=''/>
 </script>  
+<script type="text/template" id="login-template" charset="utf-8">
+  <div>
+    <h1>Login</h1>
+    {{#if message}}
+      <div>{{message}}</div>
+    {{/if}}
+    <form action="/login" method="post" accept-charset="utf-8">
+      <div>
+        <label for="">Email</label>
+        <input type="email" name="email" placeholder="Email" />
+      </div>
+      <div>
+        <label for="">Password</label>
+        <input type="password" name="password" placeholder="Password" />
+      </div>
+      <button type="submit">Login</button>
+
+    </form>
+    <hr />
+
+    <h3> Need an account? </h3>
+    <a href="/#signup">Signup</a>
+  </div> 
+</script>
+
+<script type="text/template" id="signup-template" charset="utf-8">
+  <div class="container">
+    <div class="col-sm-6.col-sm-offset-3">
+      <h1>
+        <span class="fa fa-sign-in"></span>
+        Signup
+      </h1>
+      {{#if message}} 
+        <div class="alert alert-danger"> {{message}}</div>
+      {{/if}}
+      <form action="/signup" method="post" accept-charset="utf-8">
+        <div class="form-group">
+          <label for="">Email</label>
+          <input id="email" type="email" name="email" />
+        </div>
+        <div class="form-group">
+          <label for="">Password</label>
+          <input id="password" type="password" name="password" />
+        </div>
+        <button id="signup-btn" class="btn btn-success btn-large"> Signup</button>
+
+      </form>
+      <hr />
+      <p>Already have an account?
+        <a href="/#login">Login</a>
+      </p>
+    </div>
+  </div>   
+</script>
 </div>
