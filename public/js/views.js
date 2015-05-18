@@ -15,12 +15,24 @@ app.MovieFullView = Backbone.View.extend({
 });
 
 app.AppView = Backbone.View.extend({
-  el: '#app',
+  el: '#menu-bar',
   
-  template: _.template($('#home-template').html()),
+  template: _.template($('#menu-template').html()),
 
   render: function(res) {
     this.$el.html(this.template({user: res}));
+    return this;
+ } 
+});
+
+app.RecommendationsView = Backbone.View.extend({
+  el: '#recommendations',
+  
+  template: _.template($('#recommendations-template').html()),
+
+  render: function(res) {
+    console.log(res);
+    this.$el.html(this.template({recomm: res}));
     return this;
  } 
 });

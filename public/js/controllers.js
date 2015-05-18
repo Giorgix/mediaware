@@ -16,17 +16,29 @@ app.Ctrl = {
     movieFullView.render();
   },
 
+  recommendations: function(userId) {
+    var recommendationsView = new app.RecommendationsView();
+    $.ajax({
+      type: 'GET',
+      url: '/api/recommendations/' + userId,
+      success: function(res) {
+        recommendationsView.render(res);
+      }
+    });
+  },
+
   home: function() {
-    console.log('index');
+    var self = this;
     var homeView = new app.AppView();
     $.ajax({
       type: 'GET',
       url: '/session',
       success: function(res) {
         homeView.render(res);
+        if(res != 'no user') {
+          self.recommendations(res._id);
+        }
       }
     });
   }
-
-
 }

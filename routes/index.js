@@ -6,9 +6,8 @@ module.exports = function(app, passport) {
       res.render('index');
   });
   app.get('/session', function(req, res) {
-     var user = req.user;
-    if(user) {
-      res.json(user)
+    if(req.isAuthenticated()) {  
+      res.json(req.user)
     }
     else {
       res.send('no user')

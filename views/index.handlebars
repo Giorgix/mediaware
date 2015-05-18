@@ -1,4 +1,6 @@
 <div id="app">
+  <div id="menu-bar"></div>
+  <div id="recommendations"></div>
 </div>
   <!--{{#if user}}
     <h2>Welcome: {{user.local.email}}</h2>
@@ -6,7 +8,7 @@
   {{else}}
    <a href="/login">Login</a>
   {{/if}}-->
-  <script type="text/template" id="home-template" charset="utf-8">
+  <script type="text/template" id="menu-template" charset="utf-8">
   <% if (user != 'no user') { %>
     <h2>Welcome: <%- user.local.email%></h2>
 <% } %>
@@ -15,6 +17,12 @@
 <% } %>
   
   </script>
+
+<script type='text/template' id='recommendations-template'>
+  <h2>Recommendations</h2>
+  <h3> <%= recomm[0][1] %> </h3>
+</script>  
+
 <script type='text/template' id='movie-full-template'>
   <h3> <%= movie.get('Title') %> </h3>
   <h5> <%= movie.get('Year') %> </h3>

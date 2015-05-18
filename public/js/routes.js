@@ -2,7 +2,8 @@ app.Router = new (Backbone.Router.extend({
 
   routes: {
     'movies/:movieTitle': 'movie',
-    '': 'home'
+    '': 'home',
+    'recommendations/:userId': 'recomm'
   },
 
   movie: function(movieTitle) {
@@ -11,6 +12,10 @@ app.Router = new (Backbone.Router.extend({
 
   home: function() {
     app.Ctrl.home();
+  },
+
+  recomm: function(userId) {
+    app.Ctrl.recommendations(userId);
   }
 }));
 
